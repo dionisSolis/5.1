@@ -1,0 +1,163 @@
+using System;
+namespace qwerty
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string[] fullNames = { }, titles = { };
+            string command = "";
+
+            while (command != "5")
+            {
+                Console.Clear();
+                Console.Write("Введите номер команды:\n1)Добавить досье\n2)Вывести все досье\n3)Удалить досье\n4)Поиск фамилии\n5)Выход\nВвод: ");
+                command = Console.ReadLine();
+                
+                while (command != "1" && command != "2" && command != "3" && command != "4" && command != "5")
+                {
+                    Console.Write("Введите команду корректно: ");
+                    command = Console.ReadLine();
+                }
+
+                switch (command)
+                {
+                    case "1":
+                        appendFullNames(ref fullNames, ref titles);
+                        break;
+                    case "2":
+                        writeFullFile(ref fullNames, ref titles);
+                        break;
+                    case "3":
+                        deleteFile(ref fullNames, ref titles);
+                        break;
+                    case "4":
+                        findFile(ref fullNames, ref titles);
+                        break;
+                    case "5":
+                        break;
+                }
+            }
+
+            Console.WriteLine("\nДо свидания!");
+            Console.ReadKey();
+        }
+
+        static void appendFullNames(ref string[] fullNames, ref string[] titles)
+        {
+            string[] arrayToAppendFullName = new string[fullNames.GetLength(0) + 1];
+            string[] arrayToAppendTitle = new string[titles.GetLength(0) + 1];
+
+            for (int i = 0; i < fullNames.GetLength(0); i++)
+            {
+                arrayToAppendFullName[i] = fullNames[i];
+                arrayToAppendTitle[i] = titles[i];
+            }
+
+            Console.Write("\nВведите фио нового работника: ");
+            arrayToAppendFullName[fullNames.GetLength(0)] = Console.ReadLine();
+            fullNames = arrayToAppendFullName;
+            Console.Write("Введите его должность: ");
+            arrayToAppendTitle[titles.GetLength(0)] = Console.ReadLine();
+            titles = arrayToAppendTitle;
+        }
+
+        static void writeFullFile(ref string[] fullNames, ref string[] titles)
+        {
+            Console.WriteLine();
+
+            for (int i = 0; i < fullNames.GetLength(0); i++)
+            {
+                Console.WriteLine($"{i + 1}){fullNames[i]} - {titles[i]}");
+            }
+
+            Console.WriteLine("\nНажмите любую кнопку для продолжения");
+            Console.ReadKey();
+        }
+        static void deleteFile(ref string[] fullNames, ref string[] titles)
+        {
+            int numberToDelete;
+            string[] arrayToDeleteFullName = new string[fullNames.GetLength(0) - 1];
+            string[] arrayToDeleteTitle = new string[titles.GetLength(0) - 1];
+            bool isDone = false;
+
+            Console.WriteLine("\nВсе досьe");
+
+            for (int i = 0; i < fullNames.GetLength(0); i++)
+            {
+                Console.WriteLine($"{i + 1}){fullNames[i]} - {titles[i]}");
+            }
+
+            Console.Write("\nВведите номер сотрудника для удаления: ");
+            numberToDelete = int.Parse(Console.ReadLine());
+
+            while (numberToDelete > fullNames.GetLength(0) || numberToDelete <= 0)
+            {
+                Console.Write($"Введите существующий номер (<={fullNames.GetLength(0)} и >0): ");
+                numberToDelete = int.Parse(Console.ReadLine());
+            }
+
+            for (int i = 0; i < arrayToDeleteFullName.GetLength(0); i++)
+            {
+                if (i + 1 != numberToDelete && !isDone)
+                {
+                    arrayToDeleteFullName[i] = fullNames[i];
+                    arrayToDeleteTitle[i] = titles[i];
+                    isDone = false;
+                }
+                else
+                {
+                    arrayToDeleteFullName[i] = fullNames[i + 1];
+                    arrayToDeleteTitle[i] = titles[i + 1];
+                }
+            }
+
+            fullNames = arrayToDeleteFullName;
+            titles = arrayToDeleteTitle;
+        }
+
+        static void findFile(ref string[] fullNames, ref string[] titles)
+        {
+            string lastNameToFind;
+            string[] arrayOfLastNames = new string[fullNames.GetLength(0)];
+            bool isFind = false;
+
+            Console.Write("\nВведите фамилию для поиска: ");
+            lastNameToFind = Console.ReadLine();
+
+            for (int i = 0; i < fullNames.GetLength(0); i++)
+            {
+                string lastName = "";
+                
+                for (int j = 0; j < fullNames[i].Length; j++)
+                {
+                    if (fullNames[i][j] != ' ' || lastName == "")
+                    {
+                        if (fullNames[i][j] != ' ')
+                        {
+                            lastName += fullNames[i][j];
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (lastName == lastNameToFind)
+                {
+                    Console.WriteLine($"{i + 1}){fullNames[i]} - {titles[i]}");
+                    isFind = true;
+                }
+            }
+
+            if (!isFind)
+            {
+                Console.WriteLine("\nТакой фамилии не найдено");
+            }
+
+            Console.WriteLine("\nНажмите любую кнопку для продолжения");
+            Console.ReadKey();
+        }
+    }
+}
